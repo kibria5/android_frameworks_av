@@ -117,11 +117,12 @@ CameraDeviceClient::CameraDeviceClient(const sp<CameraService>& cameraService,
     mOverrideForPerfClass(overrideForPerfClass),
     mOriginalCameraId(originalCameraId) {
 
-    std::vector<std::string> privilegedClientList = android::base::Split(
-            android::base::GetProperty("persist.vendor.camera.privapp.list", ""), ",");
-    auto it = std::find(privilegedClientList.begin(), privilegedClientList.end(),
-            clientPackageName);
-    mPrivilegedClient = it != privilegedClientList.end();
+    char value[PROPERTY_VALUE_MAX];
+    property_get("persist.vendor.camera.privapp.list", value, "");
+    String16 packagelist(value);
+    if (packagelist.contains(clientPackageName.string())) {
+        mPrivilegedClient = true;
+    }
 
     ATRACE_CALL();
     ALOGI("CameraDeviceClient %s: Opened", cameraId.c_str());

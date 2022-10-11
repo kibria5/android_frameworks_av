@@ -208,8 +208,7 @@ bool roundBufferDimensionNearest(int32_t width, int32_t height,
         auto entry = info.find(ANDROID_REQUEST_AVAILABLE_CAPABILITIES);
         for (size_t i = 0; i < entry.count; ++i) {
             uint8_t capability = entry.data.u8[i];
-            if (capability == ANDROID_REQUEST_AVAILABLE_CAPABILITIES_LOGICAL_MULTI_CAMERA ||
-                    capability == ANDROID_REQUEST_AVAILABLE_CAPABILITIES_RAW) {
+            if (capability == ANDROID_REQUEST_AVAILABLE_CAPABILITIES_LOGICAL_MULTI_CAMERA) {
                 isLogicalCamera = true;
                 break;
             }
@@ -224,10 +223,9 @@ bool roundBufferDimensionNearest(int32_t width, int32_t height,
     // Avoid roundBufferDimensionsNearest for privileged client YUV streams to meet the AIDE2
     // requirement. AIDE2 is vendor enhanced feature which requires special resolutions and
     // those are not populated in static capabilities.
-    if (isPriviledgedClient == true &&
-            (format == HAL_PIXEL_FORMAT_YCbCr_420_888 || format == HAL_PIXEL_FORMAT_BLOB)) {
+    if (isPriviledgedClient == true && format == HAL_PIXEL_FORMAT_YCbCr_420_888) {
         ALOGI("Bypass roundBufferDimensionNearest for privilegedClient YUV streams "
-                "width %d height %d for format %d", width, height, format);
+                "width %d height %d", width, height);
 
         bestWidth  = width;
         bestHeight = height;
